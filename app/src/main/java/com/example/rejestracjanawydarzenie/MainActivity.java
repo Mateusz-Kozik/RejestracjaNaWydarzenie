@@ -15,6 +15,7 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
+import android.content.Intent;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -23,6 +24,11 @@ public class MainActivity extends AppCompatActivity {
     private Spinner spinnerTicket;
     private CheckBox checkBoxAgreement;
     private Button buttonNext;
+    public static final String EXTRA_NAME = "extra_name";
+    public static final String EXTRA_EMAIL = "extra_email";
+    public static final String EXTRA_TICKET = "extra_ticket";
+
+    public static final int REQUEST_CODE = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,5 +74,15 @@ public class MainActivity extends AppCompatActivity {
         Toast.makeText(this,
                 "Dane poprawne",
                 Toast.LENGTH_SHORT).show();
+
+        String ticket = spinnerTicket.getSelectedItem().toString();
+
+        Intent intent = new Intent(MainActivity.this, SummaryActivity.class);
+
+        intent.putExtra(EXTRA_NAME, name);
+        intent.putExtra(EXTRA_EMAIL, email);
+        intent.putExtra(EXTRA_TICKET, ticket);
+
+        startActivityForResult(intent, REQUEST_CODE);
     }
 }
