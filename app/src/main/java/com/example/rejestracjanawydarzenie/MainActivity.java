@@ -2,11 +2,7 @@ package com.example.rejestracjanawydarzenie;
 
 import android.os.Bundle;
 
-import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
@@ -14,8 +10,9 @@ import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Toast;
-import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -24,6 +21,7 @@ public class MainActivity extends AppCompatActivity {
     private Spinner spinnerTicket;
     private CheckBox checkBoxAgreement;
     private Button buttonNext;
+    private ActivityResultLauncher<Intent> launcher;
     public static final String EXTRA_NAME = "extra_name";
     public static final String EXTRA_EMAIL = "extra_email";
     public static final String EXTRA_TICKET = "extra_ticket";
@@ -47,6 +45,25 @@ public class MainActivity extends AppCompatActivity {
                 validateForm();
             }
         });
+
+        // Launcher do odbierania wyniku z SummaryActivity
+        launcher = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(),
+                result -> {
+
+                    if (result.getResultCode() == RESULT_OK) {
+                        Toast.makeText(this,
+                                "Rejestracja potwierdzona",
+                                Toast.LENGTH_SHORT).show();
+                    }
+
+                    if (result.getResultCode() == RESULT_CANCELED) {
+                        Toast.makeText(this,
+                                "Rejestracja anulowana",
+                                Toast.LENGTH_SHORT).show();
+                    }
+                }
+        );
     }
 
     private void validateForm() {
@@ -83,6 +100,6 @@ public class MainActivity extends AppCompatActivity {
         intent.putExtra(EXTRA_EMAIL, email);
         intent.putExtra(EXTRA_TICKET, ticket);
 
-        startActivityForResult(intent, REQUEST_CODE);
+        launcher.launch(intent);
     }
 }
